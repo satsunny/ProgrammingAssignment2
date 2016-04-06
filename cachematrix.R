@@ -1,40 +1,67 @@
-## Put comments here that give an overall description of what your
-## functions do
+## This function takes argument of type matrix and creates a special matrix
+## which is really a list containing function to set the value of matrix 
+## get the value of matrix set the inverse of matrix get the inverse of matrix  
 
-## Write a short comment describing this function
-## This function creates a Matrix and inverse of it  
+makeCacheMatrix <- function(argMatrix = matrix()) {
 
-makeCacheMatrix <- function(x = matrix()) {
-
-        inv <- NULL
+        invOfMatrix <- NULL ## function variable invOfMatrix is initialized
+        
+        ## This function sets argMatrix to input value and invOfMatrix is initialized 
         set <- function(y) {
-                x <<- y
-                inv <<- NULL
+                argMatrix <<- y
+                invOfMatrix <<- NULL
         }
-        get <- function() x
-        setInverse <- function(inverse) inv <<- inverse
-        getInverse <- function() inv
-        list(set = set,
-             get = get,
-             setInverse = setInverse,
-             getInverse = getInverse) }
+        
+        ## This function gets "argMatrix" from environment 
+        ## as illustrated in scoping
+        get <- function() argMatrix
+        
+        ## This function sets "invOfMatrix" (inverse of matrix) 
+        ## i.e. the out of " R - solve"
+        setInverse <- function(arg_inverse) {
+                invOfMatrix <<- arg_inverse
+        }
+
+        ## return "invOfMatrix" value
+        getInverse <- function() invOfMatrix
+        
+        ## List is created for function
+        ## when setArgs is called set function is executed
+        ## when getArgs is called get function is executed
+        ## when setInverseOfMatrix is called setInverse function is executed
+        ## when getInverseOfArgs is called getInverse function is executed
+        list(set = set
+             ,get = get
+             ,setInverseOfMatrix = setInverse
+             ,getInverseOfMatrix = getInverse) 
+}
 
 
-## Write a short comment describing this function
-## This function facilitates the retrieval of data from cache 
-## provided the matrix has not changed
+## This function computes the inverse of the special matrix returned by makeCacheMatrix. 
+## If the inverse has been already calculated (and the matrix has not been changed), then cacheSolve retrieves
+## the inverse from cache. 
 
 cacheSolve <- function(x, ...) {
-        ## Return a matrix that is the inverse of 'x'
         
-        inv <- x$getInverse()
+        ## get cached value
+        inv <- x$getInverseOfMatrix()
+        
+        ## if the value is not null return cached value
         if (!is.null(inv)) {
                 message("getting cached data")
                 return(inv)
         }
+        
+        ## get matrix - input value to makeCacheMatrix. 
         mat <- x$get()
+        
+        ## compute algebric matrix inversion by calling  R - Solve
         inv <- solve(mat, ...)
-        x$setInverse(inv)
+        
+        ## Cache the inverse matrix 
+        x$setInverseOfMatrix(inv)
+        
+        ## function return value
         inv
 }
         
